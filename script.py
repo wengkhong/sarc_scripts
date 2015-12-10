@@ -14,6 +14,8 @@ if not os.path.isfile("/home/ec2-user/ref/hs37d5.fa.gz"):
 
 command = "docker pull wengkhong/speedseq"
 call(command, shell = True)
+command = "docker pull wengkhong/vcflib"
+call(command, shell = True)
 
 call("sudo pip install boto3", shell = True)
 import boto3
@@ -49,6 +51,7 @@ for line in sample_list:
 		print "Sample " + sample_name + " already done. Skipping"
 		continue
 	############################################################
+	print "Currently processing " + sample_name
 
 
 
