@@ -52,7 +52,11 @@ for line in sample_list:
 		continue
 	############################################################
 	print "Currently processing " + sample_name
-
+	#Create folder
+	#Goto folder
+	#Align and call variants
+	#Upload results
+	#Delete folder
 
 
 #for line in sample_list:
