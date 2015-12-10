@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os.path
 from subprocess import call
+import subprocess
 import csv
 
 print("Hello World")
@@ -24,33 +25,31 @@ with open('Sarc_Samples.txt','r') as tsv:
 
 print("Length", len(sample_list))
 
-s3 = boto3.resource('s3')
-bucket = s3.Bucket('takomaticsdata')
-exists = True
-try:
-    s3.meta.client.head_bucket(Bucket='takomaticsdata')
-except botocore.exceptions.ClientError as e:
-    # If a client error is thrown, then check that it was a 404 error.
-    # If it was a 404 error, then the bucket does not exist.
-    error_code = int(e.response['Error']['Code'])
-    if error_code == 404:
-        exists = False
+def checkFileInS3(command):
+	proc = subprocess.Popen(command, stdout = subprocess.PIPE, shell = True)
+        (out,err) = proc.communicate()
+        #print out
+        if out:
+		return True;
+        if not out:
+		return False;
 
-for bucket in s3.buckets.all():
-    print(bucket.name)
 
-#proc = subprocess.Popen(["cat", "/etc/services"], stdout=subprocess.PIPE, shell=True)
-#(out, err) = proc.communicate()
-#print "program output:", out
+for line in sample_list:
+	file1 = str(line[0])
+	file2 = str(line[1])
+	sample_name = str(line[2])
+	if file1 == "File1":
+		continue
+	#Check if output for this sample already exists. Skip if so
+	vcf_filename = sample_name + ".vcf"
+	filtered_vcf_filename = sample_name + ".filtered.vcf"
+	command = "aws s3 ls s3://takomaticsdata/SarcomaPanel/" + vcf_filename
+	if(checkFileInS3(command)):
+		print "Sample " + sample_name + " already done. Skipping"
+		continue
+	############################################################
 
-#path=$1
-#s3cmd info $path >/dev/null 2>&1
-
-#if [[ $? -eq 0 ]]; then
-#    echo "exist"
-#else
-#    echo "do not exist"
-#fi
 
 
 #for line in sample_list:
