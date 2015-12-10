@@ -28,3 +28,8 @@ for line in sample_list:
 	#if line[0] == "File1":
 	#	continue
 	print(line[0])
+#For each sample
+#Check if already done (look for vcf in S3)
+#If not, run
+#	Upload results
+#Else next
