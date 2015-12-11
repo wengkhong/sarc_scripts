@@ -22,7 +22,7 @@ call("sudo pip install boto3", shell = True)
 import boto3
 #Get sample list
 call("aws s3 cp s3://takomaticsdata/SarcomaPanel/Sarc_Samples.txt . ", shell = True)
-
+call("aws s3 cp s3://takomaticsdata/Sarcoma.bed . ", shell = True)
 with open('Sarc_Samples.txt','r') as tsv:
 	sample_list = [line.strip().split('\t') for line in tsv]
 
@@ -69,8 +69,14 @@ for line in sample_list:
         print "Aligning for " + sample_name
         command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/speedseq code/speedseq/bin/speedseq align -o /home/" + sample_name + "/" + sample_name + " -R \"@RG\\tID:" + sample_name + "\\tSM:" + sample_name + "\\tLB:lib1\" -t16 -T /home/" + sample_name + "/" + sample_name + "_temp -M 10 /home/ref/hs37d5.fa /home/" + sample_name + "/" + file1 + " /home/" + sample_name + "/" + file2
         print command
-        call(command, shell = True)
+        #call(command, shell = True)
         print "Calling variants for " + sample_name
+        command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/speedseq /code/speedseq/bin/freebayes -f /home/ref/hs37d5.fa -b /home/" + sample_name + "/" + sample_name + ".bam -v /home/" + sample_name + "/" + sample_name + ".vcf"
+        print command
+        #call(command, shell = True)
+        print "Getting variants in target region"
+        command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/vcflib bedtools intersect -a /home/" + sample_name + "/" + sample_name + ".vcf -b /home/Sarcoma.bed > " + sample_name + ".target.vcf"
+        print command
         print "Filtering variants for " + sample_name
 	#Upload results
         print "Uploading results for " + sample_name
