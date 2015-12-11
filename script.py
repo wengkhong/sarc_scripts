@@ -5,8 +5,6 @@ import subprocess
 import csv
 import shutil
 
-print("Hello World")
-
 #Get reference sequences
 if not os.path.isfile("/home/ec2-user/ref/hs37d5.fa.gz"):
 	command = "aws s3 cp s3://takomaticsdata/reference_genomes/hg19/ /home/ec2-user/ref --recursive --exclude \"*\" --include \"hs37d5*\""
@@ -45,9 +43,7 @@ for line in sample_list:
 	if file1 == "File1":
 		continue
 	#Check if output for this sample already exists. Skip if so
-	vcf_filename = sample_name + ".vcf"
-	filtered_vcf_filename = sample_name + ".filtered.vcf"
-	command = "aws s3 ls s3://takomaticsdata/SarcomaPanel/" + vcf_filename
+	command = "aws s3 ls s3://takomaticsdata/SarcomaPanel/" + sample_name + "/" + sample_name + ".vcf"
 	if(checkFileInS3(command)):
 		print "Sample " + sample_name + " already done. Skipping"
 		continue
@@ -90,14 +86,4 @@ for line in sample_list:
         os.chdir('..')
         print "Cleaning up folder for " + sample_name
         shutil.rmtree(sample_name)
-        break
-
-#for line in sample_list:
-	#if line[0] == "File1":
-	#	continue
-	#print(line[0])
-#For each sample
-#Check if already done (look for vcf in S3)
-#If not, run
-#	Upload results
-#Else next
+        #break
