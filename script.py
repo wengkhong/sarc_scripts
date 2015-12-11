@@ -3,6 +3,7 @@ import os.path
 from subprocess import call
 import subprocess
 import csv
+import shutil
 
 print("Hello World")
 
@@ -53,11 +54,31 @@ for line in sample_list:
 	############################################################
 	print "Currently processing " + sample_name
 	#Create folder
+        if not os.path.isdir(sample_name):
+            os.mkdir(sample_name)
+            
 	#Goto folder
+        os.chdir(sample_name)
+        #Get fastq files
+        print "Getting fastq files"
+        command = "aws s3 cp s3://takomaticsdata/SarcomaPanel/" + file1 + " ."
+        call(command, shell = True)
+        command = "aws s3 cp s3://takomaticsdata/SarcomaPanel/" + file2 + " ."
+        call(command, shell = True)
 	#Align and call variants
+        print "Aligning for " + sample_name
+        command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/speedseq code/speedseq/bin/speedseq align -o /home/" + sample_name + "/" + sample_name + " -R \"@RG\\tID:" + sample_name + "\\tSM:" + sample_name + "\\tLB:lib1\" -t16 -T /home/" + sample_name + "/" + sample_name + "_temp -M 10 /home/ref/hs37d5.fa /home/" + sample_name + "/" + file1 + " /home/" + sample_name + "/" + file2
+        print command
+        call(command, shell = True)
+        print "Calling variants for " + sample_name
+        print "Filtering variants for " + sample_name
 	#Upload results
+        print "Uploading results for " + sample_name
 	#Delete folder
-
+        os.chdir('..')
+        print "Cleaning up folder for " + sample_name
+        #shutil.rmtree(sample_name)
+        break
 
 #for line in sample_list:
 	#if line[0] == "File1":
