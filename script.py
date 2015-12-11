@@ -69,21 +69,27 @@ for line in sample_list:
         print "Aligning for " + sample_name
         command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/speedseq code/speedseq/bin/speedseq align -o /home/" + sample_name + "/" + sample_name + " -R \"@RG\\tID:" + sample_name + "\\tSM:" + sample_name + "\\tLB:lib1\" -t16 -T /home/" + sample_name + "/" + sample_name + "_temp -M 10 /home/ref/hs37d5.fa /home/" + sample_name + "/" + file1 + " /home/" + sample_name + "/" + file2
         print command
-        #call(command, shell = True)
+        call(command, shell = True)
         print "Calling variants for " + sample_name
         command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/speedseq /code/speedseq/bin/freebayes -f /home/ref/hs37d5.fa -b /home/" + sample_name + "/" + sample_name + ".bam -v /home/" + sample_name + "/" + sample_name + ".vcf"
         print command
-        #call(command, shell = True)
-        print "Getting variants in target region"
-        command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/vcflib bedtools intersect -a /home/" + sample_name + "/" + sample_name + ".vcf -b /home/Sarcoma.bed > " + sample_name + ".target.vcf"
-        print command
+        call(command, shell = True)
         print "Filtering variants for " + sample_name
+        command = "docker run -it --rm=true -v /home/ec2-user/:/home wengkhong/vcflib vcflib/bin/vcffilter -f 'DP > 100 & QUAL > 30' /home/" + sample_name + "/" + sample_name + ".vcf > " + sample_name + ".filtered.vcf"
+        print command
+        call(command, shell = True)
+        print "Getting variants in target region"
+        command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/vcflib bedtools intersect -a /home/" + sample_name + "/" + sample_name + ".filtered.vcf -b /home/Sarcoma.bed > " + sample_name + ".filtered.target.vcf"
+        print command
+        call(command, shell = True)
 	#Upload results
         print "Uploading results for " + sample_name
+        command = " aws s3 cp . s3://takomaticsdata/SarcomaPanel/" + sample_name + " --recursive --exclude \"*discordants*\" --exclude \"*splitters*\" --exclude \"*fq.gz\""
+        call(command, shell = True)
 	#Delete folder
         os.chdir('..')
         print "Cleaning up folder for " + sample_name
-        #shutil.rmtree(sample_name)
+        shutil.rmtree(sample_name)
         break
 
 #for line in sample_list:
