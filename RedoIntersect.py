@@ -16,7 +16,7 @@ for line in sample_list:
         if file1 == "File1":
                 continue
 
-        vcf_filename = sample_name + ".filtered.target.vcf"
-        rename_command = "awk 'BEGIN {OFS=\"\\t\"} {FS=\"\\t\"} {$7=\"" + sample_name + "\";print}' " + vcf_filename + " > " + sample_name + ".filtered.target.name.vcf"
-        print rename_command
-        call(rename_command, shell = True)
+        vcf_filename = sample_name + ".filtered.vcf"
+        isect_command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/vcflib bedtools intersect -u -a /home/SarcomaPanel/vcfs/" + vcf_filename + " -b /home/SarcomaPanel/vcfs/Sarcoma.bed > " + sample_name + ".filtered.target.vcf"
+        print isect_command
+        call(isect_command, shell = True)
