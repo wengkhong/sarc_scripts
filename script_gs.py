@@ -19,9 +19,9 @@ call(command, shell = True)
 call("sudo pip install boto3", shell = True)
 import boto3
 #Get sample list
-call("aws s3 cp s3://takomaticsdata/SarcomaPanel/Sarc_Samples.txt . ", shell = True)
-call("aws s3 cp s3://takomaticsdata/Sarcoma.bed . ", shell = True)
-with open('Sarc_Samples.txt','r') as tsv:
+call("aws s3 cp s3://takomaticsdata/GekSan_Panel/GS_Samples.txt . ", shell = True)
+call("aws s3 cp s3://takomaticsdata/GekSan_Panel/GS_Panel.bed . ", shell = True)
+with open('GS_Samples.txt','r') as tsv:
 	sample_list = [line.strip().split('\t') for line in tsv]
 
 print("Length", len(sample_list))
@@ -43,7 +43,7 @@ for line in sample_list:
 	if file1 == "File1":
 		continue
 	#Check if output for this sample already exists. Skip if so
-	command = "aws s3 ls s3://takomaticsdata/SarcomaPanel/" + sample_name + "/" + sample_name + ".vcf"
+	command = "aws s3 ls s3://takomaticsdata/GekSan_Panel/" + sample_name + "/" + sample_name + ".vcf"
 	if(checkFileInS3(command)):
 		print "Sample " + sample_name + " already done. Skipping"
 		continue
@@ -57,9 +57,9 @@ for line in sample_list:
         os.chdir(sample_name)
         #Get fastq files
         print "Getting fastq files"
-        command = "aws s3 cp s3://takomaticsdata/SarcomaPanel/" + file1 + " ."
+        command = "aws s3 cp s3://takomaticsdata/GekSan_Panel/" + file1 + " ."
         call(command, shell = True)
-        command = "aws s3 cp s3://takomaticsdata/SarcomaPanel/" + file2 + " ."
+        command = "aws s3 cp s3://takomaticsdata/GekSan_Panel/" + file2 + " ."
         call(command, shell = True)
 	#Align and call variants
         print "Aligning for " + sample_name
@@ -75,12 +75,12 @@ for line in sample_list:
         print command
         call(command, shell = True)
         print "Getting variants in target region"
-        command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/vcflib bedtools intersect -a /home/" + sample_name + "/" + sample_name + ".filtered.vcf -b /home/Sarcoma.bed > " + sample_name + ".filtered.target.vcf"
+        command = "docker run --rm=true -v /home/ec2-user:/home wengkhong/vcflib bedtools intersect -u -a /home/" + sample_name + "/" + sample_name + ".filtered.vcf -b /home/GS_Panel.bed > " + sample_name + ".filtered.target.vcf"
         print command
         call(command, shell = True)
 	#Upload results
         print "Uploading results for " + sample_name
-        command = " aws s3 cp . s3://takomaticsdata/SarcomaPanel/" + sample_name + " --recursive --exclude \"*discordants*\" --exclude \"*splitters*\" --exclude \"*fq.gz\""
+        command = " aws s3 cp . s3://takomaticsdata/GekSan_Panel/" + sample_name + " --recursive --exclude \"*discordants*\" --exclude \"*splitters*\" --exclude \"*fq.gz\""
         call(command, shell = True)
 	#Delete folder
         os.chdir('..')
