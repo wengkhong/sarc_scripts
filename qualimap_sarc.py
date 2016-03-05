@@ -71,4 +71,4 @@ for line in sample_list:
         os.chdir('..')
         print "Cleaning up folder for " + sample_name
         shutil.rmtree(sample_name)
-        break
+        #break
