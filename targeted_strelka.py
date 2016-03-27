@@ -26,3 +26,14 @@ def checkFileInS3(command):
                 return True;
         if not out:
                 return False;
+
+#Get sample list
+call("aws s3 cp s3://takomaticsdata/Cedric_FEL/SampleSheet.csv . ", shell = True)
+#Get target region
+call("aws s3 cp s3://takomaticsdata/Cedric_FEL/SureSelect_V5_plusUTRs.bed . ", shell = True)
+
+with open('SampleSheet.csv','r') as tsv:
+	sample_list = [line.strip().split(',') for line in tsv]
+
+for line in sample_list:
+    print(line)
