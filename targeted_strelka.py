@@ -17,6 +17,12 @@ call(command, shell = True)
 command = "docker pull wengkhong/vcflib"
 call(command, shell = True)
 
+class sample_run:
+    def __init__(self, sample_name, sample_type, file1, file2):
+        self.sample_type = sample_type
+        self.file1 = file1
+        self.file2 = file2
+        self.sample_name = sample_name
 
 def checkFileInS3(command):
         proc = subprocess.Popen(command, stdout = subprocess.PIPE, shell = True)
@@ -37,5 +43,28 @@ call("rm -f SureSelect_V5_plusUTRs_hs37d5.bed.tar.gz", shell = True)
 with open('SampleSheet.csv','r') as tsv:
 	sample_list = [line.strip().split(',') for line in tsv]
 
+samples = {}
 for line in sample_list:
-    print(line)
+    sample_name = line[0]
+    sample_type = line[1]
+    sample_file1 = line[2]
+    sample_file2 = line[3]
+
+    print sample_name + "\t" + sample_type + "\t" + sample_file1 + "\t" + sample_file2
+
+    myrun = sample_run(sample_name,sample_type, sample_file1, sample_file2)
+    #samples[sample_name]["Tumor"]
+    print myrun.sample_name
+    
+    if sample_name in samples:
+        print "Already exists. Appending"
+        samples[sample_name].append(myrun)
+    else:
+        samples[sample_name] = []
+        samples[sample_name].append(myrun)    
+
+
+for mykeys in samples:
+    print samples[mykeys]
+    #print samples[mykeys][1].sample_type
+    #print mykeys + str(len(samples[mykeys]))
