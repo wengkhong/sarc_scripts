@@ -32,7 +32,7 @@ call("aws s3 cp s3://takomaticsdata/Cedric_FEL/SampleSheet.csv . ", shell = True
 #Get target region
 call("aws s3 cp s3://takomaticsdata/SureSelect_V5_plusUTRs_hs37d5.bed.tar.gz . ", shell = True)
 call("tar xzvf SureSelect_V5_plusUTRs_hs37d5.bed.tar.gz", shell = True)
-
+call("rm -f SureSelect_V5_plusUTRs_hs37d5.bed.tar.gz", shell = True)
 
 with open('SampleSheet.csv','r') as tsv:
 	sample_list = [line.strip().split(',') for line in tsv]
