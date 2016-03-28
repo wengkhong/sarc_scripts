@@ -65,10 +65,41 @@ for line in sample_list:
         samples[sample_name] = []
         samples[sample_name].append(myrun)    
 
-
+#For each sample
 for mykeys in samples:
     #print mykeys + " " + str(len(samples[mykeys]))
     for element in samples[mykeys]:
         print element.sample_type + " " + element.file1 + " " + element.file2
     #print samples[mykeys][1].sample_type
     #print mykeys + str(len(samples[mykeys]))
+    
+    normal_file1 = []
+    normal_file2 = []
+    tumor_file1  = []
+    tumor_file2  = []
+
+    for element in samples[mykeys]:
+        if element.sample_type == "Normal":
+            normal_file1.append(element.file1)
+            normal_file2.append(element.file2)
+        elif element.sample_type == "Tumor":
+            tumor_file1.append(element.file1)
+            tumor_file2.append(element.file2)
+
+
+    for i in range(0,len(normal_file1)):
+        print normal_file1[i]
+        command = "aws s3 cp s3://takomaticsdata/" + normal_file1[i] + " ."
+        print command
+        command = "aws s3 cp s3://takomaticsdata/" + normal_file2[i] + " ."
+        print command
+
+        #Align,sort,dedup normal
+
+    #If more than one normal, merge BAMs
+
+
+    #Do same for tumor
+
+    #Run strelka
+    
