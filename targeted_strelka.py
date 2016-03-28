@@ -49,15 +49,17 @@ for line in sample_list:
     sample_type = line[1]
     sample_file1 = line[2]
     sample_file2 = line[3]
-
-    print sample_name + "\t" + sample_type + "\t" + sample_file1 + "\t" + sample_file2
+    
+    if(sample_file1 == "File1"):
+        continue
+    #print sample_name + "\t" + sample_type + "\t" + sample_file1 + "\t" + sample_file2
 
     myrun = sample_run(sample_name,sample_type, sample_file1, sample_file2)
     #samples[sample_name]["Tumor"]
-    print myrun.sample_name
+    #print myrun.sample_name
     
     if sample_name in samples:
-        print "Already exists. Appending"
+        #print "Already exists. Appending"
         samples[sample_name].append(myrun)
     else:
         samples[sample_name] = []
@@ -65,6 +67,8 @@ for line in sample_list:
 
 
 for mykeys in samples:
-    print samples[mykeys]
+    #print mykeys + " " + str(len(samples[mykeys]))
+    for element in samples[mykeys]:
+        print element.sample_type + " " + element.file1 + " " + element.file2
     #print samples[mykeys][1].sample_type
     #print mykeys + str(len(samples[mykeys]))
