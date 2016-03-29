@@ -89,17 +89,20 @@ for mykeys in samples:
 
     for i in range(0,len(normal_file1)):
         print normal_file1[i]
+        #print os.path.basename(normal_file1[i])
         command = "aws s3 cp s3://takomaticsdata/" + normal_file1[i] + " ."
         print command
         command = "aws s3 cp s3://takomaticsdata/" + normal_file2[i] + " ."
         print command
 
+        command = "docker run --rm=true -v /home/ec2-user/:/home wengkhong/speedseq-manual code/speedseq/bin/speedseq align -o " + mykeys + " -R \"@RG\\tID:" + mykeys + "\\tSM:" + mykeys + "\\tLB:lib1\" -t32 -T /home/" + mykeys + "_temp -M 10 /home/ref/hs37d5.fa /home/" + os.path.basename(normal_file1[i]) + " /home/" + os.path.basename(normal_file2[i]) + " ; aws s3 cp . s3://takomaticsdata/Cedric_FEL/" + mykeys + "/ --recursive --exclude \"*\" --include \"" + mykeys + "*bam*\" --storage-class REDUCED_REDUNDANCY ; curl -s --user 'api:key-73ddfd4799ad4e0fc4e93db4aa1fce6c'     https://api.mailgun.net/v3/sandboxd9f4c585920d4834945e6f42a721fd1f.mailgun.org/messages     -F from='Mailgun Sandbox <postmaster@sandboxd9f4c585920d4834945e6f42a721fd1f.mailgun.org>'     -F to='Weng Khong Lim <wengkhong@gmail.com>'    -F subject='Hello Weng Khong Lim'     -F text='Align Done'"
+        print command
         #Align,sort,dedup normal
-
-    #If more than one normal, merge BAMs
+        #If more than one normal, merge BAMs
 
 
     #Do same for tumor
 
     #Run strelka
-    
+    break    
+
